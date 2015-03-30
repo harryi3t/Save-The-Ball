@@ -13,25 +13,31 @@ public class Camera {
 	public Camera() {
 	}
 	
-	public void move(){
+	public void move(Light light){
 		
 		if(Keyboard.isKeyDown(Keyboard.KEY_W)){
 			position.z -= moveSpeed;
+			light.moveBy(0, 0, -moveSpeed);
 		}
 		if(Keyboard.isKeyDown(Keyboard.KEY_D) ){
 			position.x += moveSpeed;
+			light.moveBy(moveSpeed,0,0);
 		}
 		if(Keyboard.isKeyDown(Keyboard.KEY_A)){
 			position.x -= moveSpeed;
+			light.moveBy(-moveSpeed,0,0);
 		}
 		if(Keyboard.isKeyDown(Keyboard.KEY_S)){
 			position.z += moveSpeed;
+			light.moveBy(0, 0, moveSpeed);
 		}
 		if(Keyboard.isKeyDown(Keyboard.KEY_2)){
 			position.y += moveSpeed;
+			light.moveBy(0, moveSpeed, 0);
 		}
 		if(Keyboard.isKeyDown(Keyboard.KEY_1)){
 			position.y -= moveSpeed;
+			light.moveBy(0,-moveSpeed,0);
 		}
 		if(Keyboard.getEventKey()==Keyboard.KEY_EQUALS && Keyboard.getEventKeyState()){
 			moveSpeed += 0.001f;
