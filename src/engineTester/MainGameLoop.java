@@ -39,91 +39,12 @@ public class MainGameLoop {
 		DisplayManager.createDisplay(1200,800);
 		
 		Loader loader = new Loader();
-		float[] wallPositions = {			
-				0f,1f,0f,	
-				0f,0f,0f,	
-				1f,0f,0f,	
-				1f,1f,0f,		
-				
-				0f,1f,1f,	
-				0f,0f,1f,	
-				1f,0f,1f,	
-				1f,1f,1f,
-				
-				1f,1f,0f,	
-				1f,0f,0f,	
-				1f,0f,1f,	
-				1f,1f,1f,
-				
-				0f,1f,0f,	
-				0f,0f,0f,	
-				0f,0f,1f,	
-				0f,1f,1f,
-				
-				0f,1f,1f,
-				0f,1f,0f,
-				1f,1f,0f,
-				1f,1f,1f,
-				
-				0f,0f,1f,
-				0f,0f,0f,
-				1f,0f,0f,
-				1f,0f,1f
-				
-		};
-		float[] wallTextureCoords = {			
-				0,0,
-				0,1,
-				1,1,
-				1,0,			
-				0,0,
-				0,1,
-				1,1,
-				1,0,			
-				0,0,
-				0,1,
-				1,1,
-				1,0,
-				0,0,
-				0,1,
-				1,1,
-				1,0,
-				0,0,
-				0,1,
-				1,1,
-				1,0,
-				0,0,
-				0,1,
-				1,1,
-				1,0	
-		};
-		int[] wallIndices = {
-				0,1,3,	
-				3,1,2,	
-				4,5,7,
-				7,5,6,
-				8,9,11,
-				11,9,10,
-				12,13,15,
-				15,13,14,	
-				16,17,19,
-				19,17,18,
-				20,21,23,
-				23,21,22
-
-		};
-		float[] wallNormals = new float[] {
-				0,0,1,
-				0,0,-1,
-				1,0,0,
-				-1,0,0,
-				0,1,0,
-				0,-1,0};
+	
 		
 		float[] floorPosition = {
-			-100f,0f,10f,
-			 10f,0f,10f,
-			 10f,0f,-100f,
+			-100f,0f,100f,
+			 100f,0f,100f,
+			 100f,0f,-100f,
 			 -100f,0f,-100f
 		};
 		float[] floorTextureCoords = {
@@ -133,13 +54,15 @@ public class MainGameLoop {
 				0,0
 		};
 		int[] floorIndices = {
-			1,2,3,3,1,0
+				1,2,3,
+				3,1,0
 		};
 		float[] floorNormal = {
-			0,1,0	
+			0,1,0,
+			0,1,0
 		};
 		
-		RawModel wallModel = loader.loadToVAO(wallPositions, wallTextureCoords, wallNormals, wallIndices);
+		RawModel wallModel = OBJLoader.loadObjModel("wall", loader);
 		RawModel floorModel = loader.loadToVAO(floorPosition, floorTextureCoords, floorNormal, floorIndices);
 		RawModel ballModel = OBJLoader.loadObjModel("sphere", loader);
 		
@@ -160,7 +83,7 @@ public class MainGameLoop {
 		List<Wall> wallEntities = new ArrayList<Wall>();
 		Wall.addWallsToList(wallEntities,texturedWall,5);
 		
-		Light light = new Light(new Vector3f(0,0,0), new Vector3f(1,1,1));
+		Light light = new Light(new Vector3f(0,6,0), new Vector3f(1,1,1));
 		Camera camera = new Camera();
 		camera.setPosition(new Vector3f(0,12,6));
 		camera.setRotation(new Vector3f(45,0,0));
@@ -172,7 +95,7 @@ public class MainGameLoop {
 		Wall currentWall = wallEntities.get(0);
 		while(!Display.isCloseRequested()){
 			delta = Maths.getDelta();
-			camera.move();
+			camera.move(light);
 			
 			for(Entity e : wallEntities){
 				renderer.processEntities(e);
