@@ -18,6 +18,11 @@ public class Light {
 	public void setPosition(Vector3f position) {
 		this.position = position;
 	}
+	public void moveBy(float dx, float dy, float dz){
+		this.position.x += dx;
+		this.position.y += dy;
+		this.position.z += dz;
+	}
 	public Vector3f getColor() {
 		return color;
 	}
