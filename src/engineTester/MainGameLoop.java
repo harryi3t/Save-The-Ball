@@ -191,8 +191,10 @@ public class MainGameLoop {
 			if(bp.x == 1 && bp.y == 2 && bp.z == 1 && bp.w == 1 && currentWall.isLeftWall() && !ball.isFalling()){
 				Wall nextWall = wallEntities.get(wallEntities.indexOf(currentWall)+1);
 				Vector4f bp2 = nextWall.isAbove(ball.getPosition(),true); // ballPosition wrt next wall
-				if(bp2.x == 1 && bp2.y == 1 && bp2.z == 1 && bp2.w == 1)
+				if(bp2.x == 1 && bp2.y == 1 && bp2.z == 1 && bp2.w == 1){
 					currentWall = nextWall;
+					addAnotherWall(wallEntities);
+				}
 				else{
 					System.out.println(ball.getPosition());
 					System.out.println(nextWall.getPosition());
@@ -215,8 +217,10 @@ public class MainGameLoop {
 			else if(bp.x == 1 && bp.y == 1 && bp.z == 1 && bp.w == 2 && !currentWall.isLeftWall() && !ball.isFalling()){
 				Wall nextWall = wallEntities.get(wallEntities.indexOf(currentWall)+1);
 				Vector4f bp2 = nextWall.isAbove(ball.getPosition(),false); // ballPosition wrt next wall
-				if(bp2.x == 1 && bp2.y == 1 && bp2.z == 1 && bp2.w == 1)
+				if(bp2.x == 1 && bp2.y == 1 && bp2.z == 1 && bp2.w == 1){
 					currentWall = nextWall;
+					addAnotherWall(wallEntities);
+				}
 				else{
 					ball.setFallLeft(true);
 					ball.setFalling(true);
@@ -244,13 +248,9 @@ public class MainGameLoop {
 		        	if(Keyboard.getEventKeyState() && !Keyboard.isRepeatEvent())
 		        		addAnotherWall(wallEntities);
 		        }
-		        else if(Keyboard.getEventKey() == Keyboard.KEY_P){
-		        	if(Keyboard.getEventKeyState() && !Keyboard.isRepeatEvent())
-		        		wallEntities.get(0).isAbove(ball.getPosition());
-		        }
 		        else if(Keyboard.getEventKey() == Keyboard.KEY_4){
 		        	if(Keyboard.getEventKeyState() && !Keyboard.isRepeatEvent())
-		        		System.out.println(currentWall.isAbove(ball.getPosition()));
+		        		System.out.println(ball.getPosition());
 		        }
 		        else if(Keyboard.getEventKey() == Keyboard.KEY_RETURN){
 		        	if(Keyboard.getEventKeyState() && !Keyboard.isRepeatEvent())
