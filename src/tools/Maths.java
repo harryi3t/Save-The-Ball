@@ -1,11 +1,14 @@
 package tools;
 
+import org.lwjgl.Sys;
 import org.lwjgl.util.vector.Matrix4f;
+import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
 import entities.Camera;
 
 public class Maths {
+	private static long lastTime = getTime();
 	
 	public static Matrix4f createTransformationMatrix(Vector3f translation, Vector3f rotation, Vector3f scale ){
 		Matrix4f matrix = new Matrix4f();
@@ -28,5 +31,23 @@ public class Maths {
 		Matrix4f.translate(negativeTranslation,matrix,matrix);
 		
 		return matrix;
+	}
+	
+	public static int orientation(Vector2f p, Vector2f q, Vector2f r){
+		float val = (q.y - p.y) * (r.x - q.x) -
+	              (q.x - p.x) * (r.y - q.y);
+	    if (val == 0) return 0;  // colinear
+	    return (val > 0)? 1: 2; // clock or counterclock wise
+	}
+	
+	public static int getDelta(){
+		long currentTime = getTime();
+		int delta = (int)(currentTime - lastTime);
+		lastTime = getTime();
+		return delta;
+	}
+	
+	public static long getTime(){
+		return (Sys.getTime() * 1000) / Sys.getTimerResolution();
 	}
 }

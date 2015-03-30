@@ -6,9 +6,9 @@ import models.TexturedModel;
 
 public class Entity {
 	private TexturedModel model;
-	private Vector3f position; 
-	private Vector3f rotation; // in radian
-	private Vector3f scale;
+	protected Vector3f position; 
+	protected Vector3f rotation; // in radian
+	protected Vector3f scale;
 	
 	public Entity(TexturedModel model, Vector3f position, Vector3f rotation,
 			Vector3f scale) {
@@ -69,17 +69,4 @@ public class Entity {
 	public void setScale(Vector3f scale) {
 		this.scale = scale;
 	}
-
-	public void moveLeft(int speed) {
-		moveBy(-1*speed/100f, 0, -1*speed/100f);
-		rotation.y = (float)Math.toRadians(-45);
-		rotateBy(0, 0, 2+speed);
-		
-	}
-	public void moveRight(int speed) {
-		moveBy(1*speed/100f, 0, -1*speed/100f);
-		rotation.y = (float)Math.toRadians(45);
-		rotateBy(0, 0, -2-speed);
-	}
-	
 }
