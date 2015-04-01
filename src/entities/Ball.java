@@ -16,13 +16,13 @@ public class Ball extends Entity {
 		super(model, position, rotation, scale);
 	}
 	
-	public void moveLeft(int speed) {
+	public void moveLeft(float speed) {
 		moveBy(-1*speed/100f, 0, -1*speed/100f);
 		rotation.y = (float)Math.toRadians(-45);
 		rotateBy(0, 0, 2+speed);
 		
 	}
-	public void moveRight(int speed) {
+	public void moveRight(float speed) {
 		moveBy(1*speed/100f, 0, -1*speed/100f);
 		rotation.y = (float)Math.toRadians(45);
 		rotateBy(0, 0, -2-speed);

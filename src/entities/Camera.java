@@ -9,11 +9,36 @@ public class Camera {
 	private Vector3f position = new Vector3f(0,0,0);
 	private Vector3f rotation = new Vector3f(0,0,0);
 	private float moveSpeed = 0.1f;
+	private float lastBallx = 0;
+	private float lastBallz = 0;
+	private float lastfloorz = 0;
+	private static boolean temp = true;
 	
 	public Camera() {
 	}
 	
-	public void move(Light light){
+	public void move(Light light, Ball ball, Entity floor){
+		if(lastBallx==0 && lastBallz==0){ // first time
+			lastBallx = ball.getPosition().x;
+			lastBallz = ball.getPosition().z;
+		}
+		else{
+			float dz = ball.getPosition().z - lastBallz;
+			float dx = ball.getPosition().x - lastBallx;
+			position.z += dz;
+			position.x += dx;
+			lastBallz = ball.getPosition().z;
+			lastBallx = ball.getPosition().x;
+			light.moveBy(dx, 0, dz);
+			if(lastfloorz-lastBallz > 40){
+				if(temp)
+					temp = false;
+				else
+					floor.moveBy(0, 0, -lastfloorz+lastBallz);
+				lastfloorz +=  -lastfloorz+lastBallz;
+			}
+		}
+		
 		
 		if(Keyboard.isKeyDown(Keyboard.KEY_W)){
 			position.z -= moveSpeed;
@@ -50,7 +75,6 @@ public class Camera {
 			System.out.println(moveSpeed);
 		}
 	}
-
 	public Vector3f getPosition() {
 		return position;
 	}
@@ -79,5 +103,14 @@ public class Camera {
 	}
 	public void setRotationZ(float rz) {
 		this.rotation.z = rz;
+	}
+	public void setLastBallx(float lastBallx) {
+		this.lastBallx = lastBallx;
+	}
+	public void setLastBallz(float lastBallz) {
+		this.lastBallz = lastBallz;
+	}
+	public void setLastfloorz(float lastfloorz) {
+		this.lastfloorz = lastfloorz;
 	}
 }

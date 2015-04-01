@@ -35,7 +35,7 @@ public class UI
         
         b2.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
-               MainGameLoop.resetBall(MainGameLoop.ball);
+               //MainGameLoop.resetBall(MainGameLoop.ball);
             }
         });
          

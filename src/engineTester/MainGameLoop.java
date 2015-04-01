@@ -34,6 +34,10 @@ public class MainGameLoop {
 	static Ball ball = null;
 	private static int delta = Maths.getDelta();
 	private static boolean isGameOver = false;
+	private static boolean moveLeft = true;
+	private static final float initialBallSpeed = 8;
+	private static float ballSpeed = initialBallSpeed;
+	private static int initialNumWalls = 5;
 	
 	public static void main(String[] args) {
 		DisplayManager.createDisplay(1200,800);
@@ -42,10 +46,10 @@ public class MainGameLoop {
 	
 		
 		float[] floorPosition = {
-			-100f,0f,100f,
-			 100f,0f,100f,
-			 100f,0f,-100f,
-			 -100f,0f,-100f
+			-30f,0f,30f,
+			 30f,0f,30f,
+			 30f,0f,-100f,
+			 -30f,0f,-100f
 		};
 		float[] floorTextureCoords = {
 				0,20,
@@ -58,6 +62,7 @@ public class MainGameLoop {
 				3,1,0
 		};
 		float[] floorNormal = {
+			0,1,0,
 			0,1,0,
 			0,1,0
 		};
@@ -77,41 +82,37 @@ public class MainGameLoop {
 		TexturedModel texturedBall = new TexturedModel(ballModel, ballTexture);
 		TexturedModel texturedfloor = new TexturedModel(floorModel, floorTexture);
 		
-		ball = new Ball(texturedBall, new Vector3f(0,4.5f,0), new Vector3f(0,0,0), new Vector3f(0.5f,0.5f,0.5f));
+		ball = new Ball(texturedBall, new Vector3f(0f,4.5f,-1f), new Vector3f(0,0,0), new Vector3f(0.5f,0.5f,0.5f));
 		Entity floor = new Entity(texturedfloor, new Vector3f(0,0,0), new Vector3f(0,0,0), new Vector3f(1f,1f,1f));
 		
 		List<Wall> wallEntities = new ArrayList<Wall>();
-		Wall.addWallsToList(wallEntities,texturedWall,5);
+		Wall currentWall = null;
 		
 		Light light = new Light(new Vector3f(0,6,0), new Vector3f(1,1,1));
 		Camera camera = new Camera();
-		camera.setPosition(new Vector3f(0,12,6));
-		camera.setRotation(new Vector3f(45,0,0));
-		/*camera.setPosition(new Vector3f(0,50,0));
-		camera.setRotation(new Vector3f(90,0,0));*/
+		
+		resetGame(ball, camera, light, wallEntities,currentWall, texturedWall,floor);
+		currentWall = wallEntities.get(0);
 		
 		MasterRenderer renderer = new MasterRenderer();
 		delta = Maths.getDelta();
-		Wall currentWall = wallEntities.get(0);
 		while(!Display.isCloseRequested()){
+			ballSpeed += 0.01;
 			delta = Maths.getDelta();
-			camera.move(light);
+			camera.move(light,ball,floor);
 			
 			for(Entity e : wallEntities){
 				renderer.processEntities(e);
 			}
 			renderer.processEntities(ball);
 			renderer.processEntities(floor);
-			//renderer.processTerrain(terrain);
-			//renderer.processTerrain(terrain2);
 			
 			renderer.render(light, camera);
 			DisplayManager.updateDisplay();
 			
 			Vector4f bp = currentWall.isAbove(ball.getPosition()); // ballPosition wrt current wall
-			//System.out.println(bp.x+" "+bp.y+" "+bp.z+" "+bp.w);
 			// left wall falling North-East, need to check for any next wall that may save the ball
-			if(bp.x == 1 && bp.y == 2 && bp.z == 1 && bp.w == 1 && currentWall.isLeftWall() && !ball.isFalling()){
+			if(bp.x == 1 && bp.y == 2 && bp.z == 1 && bp.w == 1 && currentWall.isLeftWall() && !ball.isFalling() && ball.getPosition().y>0){
 				Wall nextWall = wallEntities.get(wallEntities.indexOf(currentWall)+1);
 				Vector4f bp2 = nextWall.isAbove(ball.getPosition(),true); // ballPosition wrt next wall
 				if(bp2.x == 1 && bp2.y == 1 && bp2.z == 1 && bp2.w == 1){
@@ -119,9 +120,6 @@ public class MainGameLoop {
 					addAnotherWall(wallEntities);
 				}
 				else{
-					System.out.println(ball.getPosition());
-					System.out.println(nextWall.getPosition());
-					System.out.println(bp2);
 					ball.setFallLeft(false);
 					ball.setFalling(true);
 				}
@@ -156,28 +154,47 @@ public class MainGameLoop {
 					isGameOver = true;
 			}
 			
-			if(Keyboard.isKeyDown(Keyboard.KEY_LEFT))
+			/*if(Keyboard.isKeyDown(Keyboard.KEY_LEFT))
 				ball.moveLeft(4);
 			else if(Keyboard.isKeyDown(Keyboard.KEY_RIGHT))
-				ball.moveRight(4);
-			
+				ball.moveRight(4);*/
+			if(!isGameOver)
+			{
+				if(ball.isFalling() && ballSpeed>0){
+					ballSpeed -= 0.5f;
+				}
+				if(moveLeft)
+					ball.moveLeft(ballSpeed);
+				else
+					ball.moveRight(ballSpeed);
+			}
 			while(Keyboard.next())
 		    {
 		        if(Keyboard.getEventKey() == Keyboard.KEY_L){
 		            if(Keyboard.getEventKeyState() && !Keyboard.isRepeatEvent())
 		                light.toggleLight();
 		    	}
-		        else if(Keyboard.getEventKey() == Keyboard.KEY_3){
+		        /*else if(Keyboard.getEventKey() == Keyboard.KEY_3){
 		        	if(Keyboard.getEventKeyState() && !Keyboard.isRepeatEvent())
 		        		addAnotherWall(wallEntities);
-		        }
+		        }*/
 		        else if(Keyboard.getEventKey() == Keyboard.KEY_4){
 		        	if(Keyboard.getEventKeyState() && !Keyboard.isRepeatEvent())
 		        		System.out.println(ball.getPosition());
 		        }
 		        else if(Keyboard.getEventKey() == Keyboard.KEY_RETURN){
+		        	if(Keyboard.getEventKeyState() && !Keyboard.isRepeatEvent()){
+		        		resetGame(ball,camera,light,wallEntities,currentWall,texturedWall,floor);
+		        		currentWall = wallEntities.get(0);
+		        	}
+		        }
+		        else if(Keyboard.getEventKey() == Keyboard.KEY_LEFT){
 		        	if(Keyboard.getEventKeyState() && !Keyboard.isRepeatEvent())
-		        		resetBall(ball);
+		        		moveLeft = true;
+		        }
+		        else if(Keyboard.getEventKey() == Keyboard.KEY_RIGHT){
+		        	if(Keyboard.getEventKeyState() && !Keyboard.isRepeatEvent())
+		        		moveLeft = false;
 		        }
 		        
 		    }
@@ -189,10 +206,22 @@ public class MainGameLoop {
 	}
 
 	
-	public static void resetBall(Ball ball) {
-		ball.setPosition(new Vector3f(0,4.5f,0));
+	public static void resetGame(Ball ball, Camera camera, Light light, List<Wall> wallEntities, Wall currentWall, TexturedModel texturedWall, Entity floor) {
+		ball.setPosition(new Vector3f(0,4.5f,-1));
 		ball.setRotation(new Vector3f(0,0,0));
 		isGameOver = false;
+		ball.setFalling(false);
+		moveLeft = true;
+		ballSpeed = initialBallSpeed;
+		camera.setPosition(new Vector3f(0,12,6));
+		camera.setRotation(new Vector3f(45,0,0));
+		camera.setLastBallx(0);
+		camera.setLastBallz(0);
+		light.setPosition(new Vector3f(0,6,0));
+		wallEntities.clear();
+		camera.setLastfloorz(0);
+		floor.setPosition(new Vector3f(0,0,0));
+		Wall.addWallsToList(wallEntities,texturedWall,initialNumWalls);
 	}
 
 	private static void addAnotherWall(List<Wall> we){
