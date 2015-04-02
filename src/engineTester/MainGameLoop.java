@@ -211,6 +211,7 @@ public class MainGameLoop {
 		ball.setRotation(new Vector3f(0,0,0));
 		isGameOver = false;
 		ball.setFalling(false);
+		ball.setVi(0);
 		moveLeft = true;
 		ballSpeed = initialBallSpeed;
 		camera.setPosition(new Vector3f(0,12,6));
