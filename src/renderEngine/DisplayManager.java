@@ -22,7 +22,7 @@ public class DisplayManager {
 		try {
 			Display.setDisplayMode(new DisplayMode(width, height));
 			Display.create(new PixelFormat(),attribs);
-			Display.setTitle("Game Engine");
+			Display.setTitle("Save The Ball");
 		} catch (LWJGLException e) {
 			e.printStackTrace();
 		}

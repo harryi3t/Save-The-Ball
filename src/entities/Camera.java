@@ -5,10 +5,13 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
 
 public class Camera {
-
-	private float distanceFromBall = 10;
-	private float pitch = 50; // angle of depression of ball as seen from camera
-	private float directionalAngle = 0; //angle of camera around z-axis
+	private static final float initialDistanceFromBall = 10;
+	private static final float InitialPitch = 50; // angle of depression of ball as seen from camera
+	private static final float initialDirectionalAngle = 0;  //angle of camera around z-axis
+	
+	private float distanceFromBall;
+	private float pitch; 
+	private float directionalAngle; 
 	
 	private Vector3f position = new Vector3f(0,0,0);
 	private Vector3f rotation = new Vector3f(0,0,0);
@@ -23,10 +26,11 @@ public class Camera {
 	private Entity floor;
 	
 	public Camera(Light light, Ball ball, Entity floor) {
+		reset();
 		this.light = light;
 		this.ball = ball;
 		this.floor = floor;
-		rotation.x = pitch;
+		rotation.x = pitch;	
 	}
 	
 	public void move(){
@@ -43,11 +47,27 @@ public class Camera {
 	
 	private void calculateZoom(){
 		distanceFromBall -= Mouse.getDWheel()*0.01f;
+		if(distanceFromBall<2)
+			distanceFromBall =2;
+		else if(distanceFromBall>40)
+			distanceFromBall = 40;
+	}
+	
+	public void reset(){
+		distanceFromBall = initialDistanceFromBall;
+		pitch = InitialPitch; 
+		rotation.x = pitch;
+		directionalAngle = initialDirectionalAngle;
+		rotation.y = -directionalAngle;
+		setLastBallx(0);
+		setLastBallz(0);
 	}
 	
 	private void calculatePitch(){
 		if(Mouse.isButtonDown(0)){
 			pitch -= Mouse.getDY();
+			if(pitch<10) pitch = 10;
+			else if(pitch>90) pitch = 90;
 			rotation.x = pitch;
 		}
 	}
@@ -55,6 +75,10 @@ public class Camera {
 	private void calculateDirectionalAngle() {
 		if(Mouse.isButtonDown(0)){
 			directionalAngle -= Mouse.getDX();
+			if(directionalAngle>90)
+				directionalAngle = 90;
+			else if(directionalAngle<-90)
+				directionalAngle = -90;
 			rotation.y = -directionalAngle;
 		}
 	}

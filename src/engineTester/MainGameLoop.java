@@ -46,15 +46,15 @@ public class MainGameLoop {
 	
 		
 		float[] floorPosition = {
-			-30f,0f,30f,
-			 30f,0f,30f,
-			 30f,0f,-100f,
-			 -30f,0f,-100f
+			-3000f,0f,30f,
+			 3000f,0f,30f,
+			 3000f,0f,-10000f,
+			 -3000f,0f,-10000f
 		};
 		float[] floorTextureCoords = {
-				0,20,
-				20,20,
-				20,0,
+				0,2000,
+				2000,2000,
+				2000,0,
 				0,0
 		};
 		int[] floorIndices = {
@@ -213,12 +213,10 @@ public class MainGameLoop {
 		ball.setFalling(false);
 		ball.setVi(0);
 		moveLeft = true;
-		ballSpeed = initialBallSpeed;
-		camera.setLastBallx(0);
-		camera.setLastBallz(0);
+		ballSpeed = initialBallSpeed;		
 		light.setPosition(new Vector3f(0,6,0));
 		wallEntities.clear();
-		camera.setLastfloorz(0);
+		camera.reset();
 		floor.setPosition(new Vector3f(0,0,0));
 		Wall.addWallsToList(wallEntities,texturedWall,initialNumWalls);
 	}
