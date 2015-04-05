@@ -60,21 +60,7 @@ public class Ball extends Entity {
 				bounces = 0;
 			}
 		}
-		
 		super.moveBy(0, (vf*counter)/10000f, 0);
-		
-		/*if(this.position.y > 0.5f)
-			super.moveBy(0, (vf*counter)/10000f, 0);
-		else{
-			counter-=2;
-			if(vi==0)
-				vi = -vf;
-			float vf2 = (vi - 10*counter);
-			super.moveBy(0, (vf2*counter)/10000f, 0);
-			if(counter<0)
-				setFalling(false);
-		}*/
-		
 	}
 	
 	public boolean isFalling() {

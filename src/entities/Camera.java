@@ -6,6 +6,10 @@ import org.lwjgl.util.vector.Vector3f;
 
 public class Camera {
 
+	private float distanceFromBall = 10;
+	private float pitch = 50; // angle of depression of ball as seen from camera
+	private float directionalAngle = 0; //angle of camera around z-axis
+	
 	private Vector3f position = new Vector3f(0,0,0);
 	private Vector3f rotation = new Vector3f(0,0,0);
 	private float moveSpeed = 0.1f;
@@ -14,67 +18,66 @@ public class Camera {
 	private float lastfloorz = 0;
 	private static boolean temp = true;
 	
-	public Camera() {
+	private Light light;
+	private Entity ball;
+	private Entity floor;
+	
+	public Camera(Light light, Ball ball, Entity floor) {
+		this.light = light;
+		this.ball = ball;
+		this.floor = floor;
+		rotation.x = pitch;
 	}
 	
-	public void move(Light light, Ball ball, Entity floor){
-		if(lastBallx==0 && lastBallz==0){ // first time
-			lastBallx = ball.getPosition().x;
-			lastBallz = ball.getPosition().z;
-		}
-		else{
-			float dz = ball.getPosition().z - lastBallz;
-			float dx = ball.getPosition().x - lastBallx;
-			position.z += dz;
-			position.x += dx;
-			lastBallz = ball.getPosition().z;
-			lastBallx = ball.getPosition().x;
-			light.moveBy(dx, 0, dz);
-			if(lastfloorz-lastBallz > 40){
-				if(temp)
-					temp = false;
-				else
-					floor.moveBy(0, 0, -lastfloorz+lastBallz);
-				lastfloorz +=  -lastfloorz+lastBallz;
-			}
-		}
-		
-		
-		if(Keyboard.isKeyDown(Keyboard.KEY_W)){
-			position.z -= moveSpeed;
-			light.moveBy(0, 0, -moveSpeed);
-		}
-		if(Keyboard.isKeyDown(Keyboard.KEY_D) ){
-			position.x += moveSpeed;
-			light.moveBy(moveSpeed,0,0);
-		}
-		if(Keyboard.isKeyDown(Keyboard.KEY_A)){
-			position.x -= moveSpeed;
-			light.moveBy(-moveSpeed,0,0);
-		}
-		if(Keyboard.isKeyDown(Keyboard.KEY_S)){
-			position.z += moveSpeed;
-			light.moveBy(0, 0, moveSpeed);
-		}
-		if(Keyboard.isKeyDown(Keyboard.KEY_2)){
-			position.y += moveSpeed;
-			light.moveBy(0, moveSpeed, 0);
-		}
-		if(Keyboard.isKeyDown(Keyboard.KEY_1)){
-			position.y -= moveSpeed;
-			light.moveBy(0,-moveSpeed,0);
-		}
-		if(Keyboard.getEventKey()==Keyboard.KEY_EQUALS && Keyboard.getEventKeyState()){
-			moveSpeed += 0.001f;
-			System.out.println(moveSpeed);
-		}
-		if(Keyboard.getEventKey()==Keyboard.KEY_MINUS && Keyboard.getEventKeyState()
-			&& !Keyboard.isRepeatEvent()){
-			if(moveSpeed>0.01)
-				moveSpeed -= 0.001f;
-			System.out.println(moveSpeed);
+	public void move(){
+		calculateZoom();
+		calculatePitch();
+		calculateDirectionalAngle();
+		float zDistance = calculateZDistance();
+		float xDistance = calculateXDistance();
+		float yDistance = calculateVerticalDistance();
+		Vector3f calculatedPosition = new Vector3f(xDistance,yDistance,zDistance);
+		setCameraPosition(calculatedPosition);
+	}
+	
+	
+	private void calculateZoom(){
+		distanceFromBall -= Mouse.getDWheel()*0.01f;
+	}
+	
+	private void calculatePitch(){
+		if(Mouse.isButtonDown(0)){
+			pitch -= Mouse.getDY();
+			rotation.x = pitch;
 		}
 	}
+	
+	private void calculateDirectionalAngle() {
+		if(Mouse.isButtonDown(0)){
+			directionalAngle -= Mouse.getDX();
+			rotation.y = -directionalAngle;
+		}
+	}
+	
+	private float calculateZDistance(){
+		return (float) (distanceFromBall*Math.cos(Math.toRadians(pitch))*Math.cos(Math.toRadians(directionalAngle)));
+	}
+	
+	private float calculateXDistance(){
+		return (float) (distanceFromBall*Math.cos(Math.toRadians(pitch))*Math.sin(Math.toRadians(directionalAngle)));
+	}
+	
+	private float calculateVerticalDistance(){
+		return (float) (distanceFromBall*Math.sin(Math.toRadians(pitch)));
+	}
+	
+	private void setCameraPosition(Vector3f calculatedPosition){
+		position.y = ball.getPosition().y + calculatedPosition.y;
+		position.z = ball.getPosition().z + calculatedPosition.z;
+		position.x = ball.getPosition().x + calculatedPosition.x;
+		light.setPosition(position);
+	}
+	
 	public Vector3f getPosition() {
 		return position;
 	}
@@ -113,4 +116,5 @@ public class Camera {
 	public void setLastfloorz(float lastfloorz) {
 		this.lastfloorz = lastfloorz;
 	}
+
 }

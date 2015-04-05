@@ -89,7 +89,7 @@ public class MainGameLoop {
 		Wall currentWall = null;
 		
 		Light light = new Light(new Vector3f(0,6,0), new Vector3f(1,1,1));
-		Camera camera = new Camera();
+		Camera camera = new Camera(light,ball,floor);
 		
 		resetGame(ball, camera, light, wallEntities,currentWall, texturedWall,floor);
 		currentWall = wallEntities.get(0);
@@ -99,7 +99,7 @@ public class MainGameLoop {
 		while(!Display.isCloseRequested()){
 			ballSpeed += 0.01;
 			delta = Maths.getDelta();
-			camera.move(light,ball,floor);
+			camera.move();
 			
 			for(Entity e : wallEntities){
 				renderer.processEntities(e);
@@ -214,8 +214,6 @@ public class MainGameLoop {
 		ball.setVi(0);
 		moveLeft = true;
 		ballSpeed = initialBallSpeed;
-		camera.setPosition(new Vector3f(0,12,6));
-		camera.setRotation(new Vector3f(45,0,0));
 		camera.setLastBallx(0);
 		camera.setLastBallz(0);
 		light.setPosition(new Vector3f(0,6,0));
