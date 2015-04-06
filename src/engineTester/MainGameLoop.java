@@ -8,10 +8,21 @@ import java.util.List;
 import models.RawModel;
 import models.TexturedModel;
 
+import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.DisplayMode;
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
+
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+
+import javax.imageio.ImageIO;
 
 import renderEngine.DisplayManager;
 import renderEngine.Loader;
@@ -35,7 +46,13 @@ public class MainGameLoop {
 	private static float ballSpeed = initialBallSpeed;
 	private static int initialNumWalls = 5;
 	
+	private static int WIDTH = 800;
+	private static int  HEIGHT = 600;
+	
 	public static void main(String[] args) {
+<<<<<<< .mine
+		DisplayManager.createDisplay(WIDTH,HEIGHT);
+=======
 		
 		Toolkit t = Toolkit.getDefaultToolkit();
 		Dimension d = t.getScreenSize();
@@ -46,7 +63,10 @@ public class MainGameLoop {
 		
 		Display.setVSyncEnabled(true);
 		Score score = new Score(Display.getWidth(),Display.getHeight());
+>>>>>>> .r19
 				
+		Score score = new Score();
+		
 		Loader loader = new Loader();
 	
 		
@@ -100,6 +120,16 @@ public class MainGameLoop {
 		delta = Maths.getDelta();
 		
 		while(!Display.isCloseRequested()){
+			/*if(Display.wasResized() && (WIDTH-Display.getWidth()) > 10){
+				WIDTH = Display.getWidth();
+				GL11.glViewport(0, 0, WIDTH, Display.getHeight());
+				try {
+					Display.setDisplayMode(new DisplayMode(WIDTH, Display.getHeight()));
+				} catch (LWJGLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}*/
 			if(!isGameOver)
 				ballSpeed += 0.01;
 			delta = Maths.getDelta();
@@ -116,7 +146,7 @@ public class MainGameLoop {
 			if(isGameOver)
 				score.showScore();
 			
-			score.updateScore(ballSpeed);
+			score.updateScore(ballSpeed,Display.getWidth(),Display.getHeight());
 			DisplayManager.updateDisplay();
 			
 			Vector4f bp = currentWall.isAbove(ball.getPosition()); // ballPosition wrt current wall
@@ -193,6 +223,23 @@ public class MainGameLoop {
 		        	if(Keyboard.getEventKeyState() && !Keyboard.isRepeatEvent())
 		        		moveLeft = false;
 		        }
+		        else if(Keyboard.getEventKey() == Keyboard.KEY_F){
+		        	if(Keyboard.getEventKeyState() && !Keyboard.isRepeatEvent())	
+		        	{
+		                try {
+		                	if(Display.isFullscreen()){
+		                		Display.setDisplayMode(new DisplayMode(WIDTH, HEIGHT));
+		                		Display.setFullscreen(false);
+		                	}
+		                	else{
+		                		Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode());
+		                		Display.setFullscreen(true);
+		                	}
+						} catch (LWJGLException e1) {
+							e1.printStackTrace();
+						}
+		        	}
+		        }
 		        
 		    }
 		}
@@ -201,8 +248,6 @@ public class MainGameLoop {
 		DisplayManager.closeDisplay();
 		System.exit(0);
 	}
-
-	
 	public static void resetGame(Score score, Ball ball, Camera camera, Light light, List<Wall> wallEntities, Wall currentWall, TexturedModel texturedWall, Entity floor) {
 		score.setCurrentSessionScore(0);
 		score.setCurrentScore(0);
@@ -223,5 +268,14 @@ public class MainGameLoop {
 	private static void addAnotherWall(List<Wall> we){
 		Wall oldWall = we.remove(0);
 		we.add(we.get(we.size()-1).getNextWall());
+	}
+	
+	public static void changeDimention(int width,int height){
+		try {
+			Display.setDisplayMode(new DisplayMode(width,height));
+			
+		} catch (LWJGLException e) {
+			e.printStackTrace();
+		}
 	}
 }

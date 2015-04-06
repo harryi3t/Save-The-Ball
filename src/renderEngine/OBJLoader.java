@@ -58,12 +58,6 @@ public class OBJLoader {
 			
 			}
 			
-			
-			System.out.println(textures.size());
-			System.out.println(normals.size());
-			System.out.println(vertices.size());
-			
-			
 			while(line!=null){
 				if(!line.startsWith("f ")){
 					line = reader.readLine();

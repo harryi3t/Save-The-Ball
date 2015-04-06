@@ -4,6 +4,11 @@ import javax.swing.*;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
+
+
 
 // Must import the lwjgl Display class
 import org.lwjgl.opengl.Display;
@@ -22,7 +27,6 @@ public class UI
          
         // The exit button.
         JButton b1 = new JButton("Exit");
-        JButton b2 = new JButton("Reset Ball");
         JMenu contextMenu = new JMenu();
         
         contextMenu.add(new JMenuItem("Drop"));
@@ -33,12 +37,7 @@ public class UI
             }
         });
         
-        b2.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent event) {
-               //MainGameLoop.resetBall(MainGameLoop.ball);
-            }
-        });
-         
+     
         // Create a new canvas and set its size.
         Canvas canvas = new Canvas();
         // Must be 640*480 to match the size of an Env3D window
@@ -53,15 +52,37 @@ public class UI
         // Construct the GUI as normal
         Panel panel = new Panel();
         panel.setLayout(new GridLayout(1, 2));
-        panel.add(b1);
-        panel.add(b2);
+        //panel.add(b1);
         frame.add(panel,BorderLayout.NORTH);
         //frame.add(contextMenu, BorderLayout.NORTH);
         frame.add(canvas, BorderLayout.CENTER);
          
         frame.pack();
         frame.setVisible(true);
-         
+        
+        canvas.addComponentListener(new ComponentListener() {
+			
+			@Override
+			public void componentShown(ComponentEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			@Override
+			public void componentResized(ComponentEvent arg0) {
+				MainGameLoop.changeDimention(canvas.getWidth(), canvas.getHeight());
+			}
+			@Override
+			public void componentMoved(ComponentEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			@Override
+			public void componentHidden(ComponentEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+        
         // Make sure you run the game, which 
         // executes on a separate thread.
         MainGameLoop.main(null);

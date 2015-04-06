@@ -19,6 +19,7 @@ public class DisplayManager {
             Display.create();
             Display.setTitle("Save The Ball");
             Display.setVSyncEnabled(true);
+            Display.setResizable(true);
         } catch (LWJGLException e) {
             e.printStackTrace();
             System.exit(0);

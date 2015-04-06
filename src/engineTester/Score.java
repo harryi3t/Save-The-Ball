@@ -46,11 +46,8 @@ public class Score {
     /**
      * Initialise resources
      */
-    public Score(int width, int height) {
+    public Score() {
     	readHighScore();
-    	
-    	this.height = height;
-    	this.width = width;
     	
     	//load a default java font
         Font awtFont = new Font("Times New Roman", Font.BOLD, 24);
@@ -87,7 +84,10 @@ public class Score {
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);		
     }
     
-	public void updateScore(float ballSpeed) {
+	public void updateScore(float ballSpeed,int width, int height) {
+		this.height = height;
+    	this.width = width;
+		
 		if(currentSessionScore==0) // the ball has not yet fallen
 			currentScore += ballSpeed/10;
 		prepare();
