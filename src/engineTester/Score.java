@@ -84,7 +84,7 @@ public class Score {
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
 		GL11.glOrtho(0, width, height, 0, 1, -1);
-		GL11.glMatrixMode(GL11.GL_MODELVIEW);
+		GL11.glMatrixMode(GL11.GL_MODELVIEW);		
     }
     
 	public void updateScore(float ballSpeed) {
@@ -98,9 +98,14 @@ public class Score {
 	
 	public void showScore(){
 		prepare();
-		font2.drawString(width/2-300, height/2-100, "Your Score = "+(int)currentScore, Color.cyan);
-		font2.drawString(width/2-300, height/2, "High Score = "+highScore, Color.orange);
-		font.drawString(0,0, "", Color.magenta);
+		int x = width/2-300;
+		int y = height/2-100;
+		GL11.glColor3f(1, 1, 1);
+		GL11.glRectf(x-50, y-150, x+640, y+200);
+		font2.drawString(x, y, "Your Score = "+(int)currentScore, Color.red);
+		font2.drawString(x, y + 100, "High Score = "+highScore, Color.black);
+		font2.drawString(x+100,y-100, "GAME OVER", Color.magenta);
+		font.drawString(x+100,y+170, "Please <Return> to Restart . . .", Color.black);
 	}
 
 	public void storeSessionScore() {
