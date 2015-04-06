@@ -1,5 +1,7 @@
 package engineTester;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,10 +36,16 @@ public class MainGameLoop {
 	private static int initialNumWalls = 5;
 	
 	public static void main(String[] args) {
-		DisplayManager.createDisplay(1200,800);
+		
+		Toolkit t = Toolkit.getDefaultToolkit();
+		Dimension d = t.getScreenSize();
+
+		int screenHeight = d.height;
+		int screenWidth = d.width;
+		DisplayManager.createDisplay(screenWidth,screenHeight);
 		Display.setVSyncEnabled(true);
 		Score score = new Score(Display.getWidth(),Display.getHeight());
-		
+				
 		Loader loader = new Loader();
 	
 		

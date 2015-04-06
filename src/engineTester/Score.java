@@ -15,7 +15,7 @@ import java.io.InputStream;
 
 
 
-import java.util.stream.Collector.Characteristics;
+//import java.util.stream.Collector.Characteristics;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
