@@ -15,7 +15,7 @@ public class DisplayManager {
 	
 	public static void createDisplay(int width, int height){
 		
-		ContextAttribs attribs = new ContextAttribs(3, 2)
+		/*ContextAttribs attribs = new ContextAttribs(3, 2)
 			.withForwardCompatible(true)
 			.withProfileCore(true);
 		
@@ -27,7 +27,16 @@ public class DisplayManager {
 			e.printStackTrace();
 		}
 		
-		GL11.glViewport(0, 0, width, height);
+		GL11.glViewport(0, 0, width, height);*/
+		
+		try {
+            Display.setDisplayMode(new DisplayMode(width,height));
+            Display.create();
+            Display.setVSyncEnabled(true);
+        } catch (LWJGLException e) {
+            e.printStackTrace();
+            System.exit(0);
+        }
 	}
 	
 	public static void updateDisplay(){

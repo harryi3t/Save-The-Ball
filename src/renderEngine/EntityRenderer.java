@@ -17,6 +17,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 import shaders.StaticShader;
 import tools.Maths;
+import engineTester.Score;
 import entities.Entity;
 
 public class EntityRenderer {

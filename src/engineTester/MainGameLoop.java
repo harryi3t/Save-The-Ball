@@ -1,6 +1,5 @@
 package engineTester;
 
-import java.awt.RenderingHints.Key;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,39 +7,36 @@ import models.RawModel;
 import models.TexturedModel;
 
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
+import renderEngine.DisplayManager;
+import renderEngine.Loader;
+import renderEngine.MasterRenderer;
+import renderEngine.OBJLoader;
+import textures.ModelTexture;
+import tools.Maths;
 import entities.Ball;
 import entities.Camera;
 import entities.Entity;
 import entities.Light;
 import entities.Wall;
-import renderEngine.DisplayManager;
-import renderEngine.Loader;
-import renderEngine.MasterRenderer;
-import renderEngine.OBJLoader;
-import renderEngine.EntityRenderer;
-import shaders.StaticShader;
-import terrains.Terrain;
-import textures.ModelTexture;
-import tools.Maths;
 
 public class MainGameLoop {
 	
-	private static final float wl = 0.70710678f;
 	static Ball ball = null;
 	private static int delta = Maths.getDelta();
 	private static boolean isGameOver = false;
 	private static boolean moveLeft = true;
-	private static final float initialBallSpeed = 8;
+	private static final float initialBallSpeed = 4;
 	private static float ballSpeed = initialBallSpeed;
 	private static int initialNumWalls = 5;
 	
 	public static void main(String[] args) {
 		DisplayManager.createDisplay(1200,800);
+		Display.setVSyncEnabled(true);
+		Score score = new Score(Display.getWidth(),Display.getHeight());
 		
 		Loader loader = new Loader();
 	
@@ -75,9 +71,6 @@ public class MainGameLoop {
 		ModelTexture ballTexture = new ModelTexture(loader.loadTexture("textures/Football"));
 		ModelTexture floorTexture = new ModelTexture(loader.loadTexture("textures/grass"));
 		
-		//Terrain terrain = new Terrain(0, 0, loader, new ModelTexture(loader.loadTexture("textures/grass","JPG")));
-		//Terrain terrain2 = new Terrain(1, 0, loader, new ModelTexture(loader.loadTexture("textures/grass","JPG")));
-		
 		TexturedModel texturedWall = new TexturedModel(wallModel, wallTexture);
 		TexturedModel texturedBall = new TexturedModel(ballModel, ballTexture);
 		TexturedModel texturedfloor = new TexturedModel(floorModel, floorTexture);
@@ -91,23 +84,30 @@ public class MainGameLoop {
 		Light light = new Light(new Vector3f(0,6,0), new Vector3f(1,1,1));
 		Camera camera = new Camera(light,ball,floor);
 		
-		resetGame(ball, camera, light, wallEntities,currentWall, texturedWall,floor);
+		resetGame(score,ball, camera, light, wallEntities,currentWall, texturedWall,floor);
 		currentWall = wallEntities.get(0);
 		
 		MasterRenderer renderer = new MasterRenderer();
 		delta = Maths.getDelta();
+		
 		while(!Display.isCloseRequested()){
-			ballSpeed += 0.01;
+			if(!isGameOver)
+				ballSpeed += 0.01;
 			delta = Maths.getDelta();
 			camera.move();
 			
 			for(Entity e : wallEntities){
 				renderer.processEntities(e);
 			}
-			renderer.processEntities(ball);
 			renderer.processEntities(floor);
-			
+			renderer.processEntities(ball);
 			renderer.render(light, camera);
+			if(ball.isFalling())
+				score.storeSessionScore();
+			if(isGameOver)
+				score.showScore();
+			
+			score.updateScore(ballSpeed);
 			DisplayManager.updateDisplay();
 			
 			Vector4f bp = currentWall.isAbove(ball.getPosition()); // ballPosition wrt current wall
@@ -170,21 +170,9 @@ public class MainGameLoop {
 			}
 			while(Keyboard.next())
 		    {
-		        if(Keyboard.getEventKey() == Keyboard.KEY_L){
-		            if(Keyboard.getEventKeyState() && !Keyboard.isRepeatEvent())
-		                light.toggleLight();
-		    	}
-		        /*else if(Keyboard.getEventKey() == Keyboard.KEY_3){
-		        	if(Keyboard.getEventKeyState() && !Keyboard.isRepeatEvent())
-		        		addAnotherWall(wallEntities);
-		        }*/
-		        else if(Keyboard.getEventKey() == Keyboard.KEY_4){
-		        	if(Keyboard.getEventKeyState() && !Keyboard.isRepeatEvent())
-		        		System.out.println(ball.getPosition());
-		        }
-		        else if(Keyboard.getEventKey() == Keyboard.KEY_RETURN){
+		        if(Keyboard.getEventKey() == Keyboard.KEY_RETURN){
 		        	if(Keyboard.getEventKeyState() && !Keyboard.isRepeatEvent()){
-		        		resetGame(ball,camera,light,wallEntities,currentWall,texturedWall,floor);
+		        		resetGame(score,ball,camera,light,wallEntities,currentWall,texturedWall,floor);
 		        		currentWall = wallEntities.get(0);
 		        	}
 		        }
@@ -206,7 +194,9 @@ public class MainGameLoop {
 	}
 
 	
-	public static void resetGame(Ball ball, Camera camera, Light light, List<Wall> wallEntities, Wall currentWall, TexturedModel texturedWall, Entity floor) {
+	public static void resetGame(Score score, Ball ball, Camera camera, Light light, List<Wall> wallEntities, Wall currentWall, TexturedModel texturedWall, Entity floor) {
+		score.setCurrentSessionScore(0);
+		score.setCurrentScore(0);
 		ball.setPosition(new Vector3f(0,4.5f,-1));
 		ball.setRotation(new Vector3f(0,0,0));
 		isGameOver = false;
