@@ -1,7 +1,5 @@
 package engineTester;
 
-import java.awt.Dimension;
-import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,17 +10,8 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
-
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-
-import javax.imageio.ImageIO;
 
 import renderEngine.DisplayManager;
 import renderEngine.Loader;
@@ -50,21 +39,8 @@ public class MainGameLoop {
 	private static int  HEIGHT = 600;
 	
 	public static void main(String[] args) {
-<<<<<<< .mine
 		DisplayManager.createDisplay(WIDTH,HEIGHT);
-=======
 		
-		Toolkit t = Toolkit.getDefaultToolkit();
-		Dimension d = t.getScreenSize();
-
-		int screenHeight = d.height;
-		int screenWidth = d.width;
-		DisplayManager.createDisplay(screenWidth,screenHeight);
-		
-		Display.setVSyncEnabled(true);
-		Score score = new Score(Display.getWidth(),Display.getHeight());
->>>>>>> .r19
-				
 		Score score = new Score();
 		
 		Loader loader = new Loader();
