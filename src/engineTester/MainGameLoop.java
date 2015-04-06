@@ -43,6 +43,7 @@ public class MainGameLoop {
 		int screenHeight = d.height;
 		int screenWidth = d.width;
 		DisplayManager.createDisplay(screenWidth,screenHeight);
+		
 		Display.setVSyncEnabled(true);
 		Score score = new Score(Display.getWidth(),Display.getHeight());
 				
