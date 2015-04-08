@@ -96,16 +96,6 @@ public class MainGameLoop {
 		delta = Maths.getDelta();
 		
 		while(!Display.isCloseRequested()){
-			/*if(Display.wasResized() && (WIDTH-Display.getWidth()) > 10){
-				WIDTH = Display.getWidth();
-				GL11.glViewport(0, 0, WIDTH, Display.getHeight());
-				try {
-					Display.setDisplayMode(new DisplayMode(WIDTH, Display.getHeight()));
-				} catch (LWJGLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			}*/
 			if(!isGameOver)
 				ballSpeed += 0.01;
 			delta = Maths.getDelta();

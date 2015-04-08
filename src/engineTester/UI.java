@@ -10,6 +10,9 @@ import java.beans.PropertyChangeListener;
 
 
 
+
+
+
 // Must import the lwjgl Display class
 import org.lwjgl.opengl.Display;
  
@@ -24,67 +27,39 @@ public class UI
         frame.setTitle("Save The Ball");
         ImageIcon icon = new ImageIcon("res/icon/ball.png");
         frame.setIconImage(icon.getImage());
-         
-        // The exit button.
-        JButton b1 = new JButton("Exit");
-        JMenu contextMenu = new JMenu();
         
-        contextMenu.add(new JMenuItem("Drop"));
-         
-        b1.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent event) {
-                System.exit(0);
-            }
-        });
-        
-     
         // Create a new canvas and set its size.
         Canvas canvas = new Canvas();
         // Must be 640*480 to match the size of an Env3D window
-        canvas.setSize(1200, 800);
+        canvas.setSize(800, 600);
         // This is the magic!  The setParent method attaches the 
         // opengl window to the awt canvas.
         try {
             Display.setParent(canvas);
         } catch (Exception e) {
         }
-         
-        // Construct the GUI as normal
-        Panel panel = new Panel();
-        panel.setLayout(new GridLayout(1, 2));
-        //panel.add(b1);
-        frame.add(panel,BorderLayout.NORTH);
-        //frame.add(contextMenu, BorderLayout.NORTH);
-        frame.add(canvas, BorderLayout.CENTER);
-         
+        
+        frame.add(canvas,BorderLayout.CENTER); 
+        
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        frame.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                if (JOptionPane.showConfirmDialog(frame, 
+                    "Are you sure to exit the game?", "Really Closing?", 
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
+                    	System.exit(0);
+                	}
+                else{
+                	
+                }
+            }
+        });
+        
         frame.pack();
         frame.setVisible(true);
         
-        canvas.addComponentListener(new ComponentListener() {
-			
-			@Override
-			public void componentShown(ComponentEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-			@Override
-			public void componentResized(ComponentEvent arg0) {
-				MainGameLoop.changeDimention(canvas.getWidth(), canvas.getHeight());
-			}
-			@Override
-			public void componentMoved(ComponentEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-			@Override
-			public void componentHidden(ComponentEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-		});
-        
-        // Make sure you run the game, which 
-        // executes on a separate thread.
         MainGameLoop.main(null);
          
     }
