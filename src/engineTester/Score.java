@@ -1,33 +1,25 @@
 package engineTester;
 
 import java.awt.Font;
-import java.io.EOFException;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
- 
 
-
-
-
-
-
-//import java.util.stream.Collector.Characteristics;
-
-import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
- 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.TrueTypeFont;
+import org.newdawn.slick.opengl.Texture;
+import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
   
 public class Score {
-  
+	private Texture texture1;
+	private Texture texture2;
+	
     /** The fonts to draw to the screen */
     private TrueTypeFont font;
     private TrueTypeFont font2;
@@ -48,7 +40,6 @@ public class Score {
      */
     public Score() {
     	readHighScore();
-    	
     	//load a default java font
         Font awtFont = new Font("Times New Roman", Font.BOLD, 24);
         font = new TrueTypeFont(awtFont, antiAlias);
@@ -82,6 +73,7 @@ public class Score {
 		GL11.glLoadIdentity();
 		GL11.glOrtho(0, width, height, 0, 1, -1);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);		
+		
     }
     
 	public void updateScore(float ballSpeed,int width, int height) {
@@ -152,6 +144,59 @@ public class Score {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void loadPlayImage(String image1, String image2) {
+		try {
+        	texture1 = TextureLoader.getTexture("PNG", new FileInputStream(image1));
+        	texture2 = TextureLoader.getTexture("PNG", new FileInputStream(image2));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+	}
+	
+	public void renderPlayButton(boolean isPlayButtonHovered){
+		int w = Display.getWidth(), h = Display.getHeight();
+		int mw = Display.getDesktopDisplayMode().getWidth(); // max width
+		int mh = Display.getDesktopDisplayMode().getHeight(); // max height
+		int size = (int) (200*(h*w/(float)(mw*mh)));
+		int x=w/2 - size/2, y=h/2 + size/2;
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
+		GL11.glShadeModel(GL11.GL_SMOOTH);        
+		GL11.glDisable(GL11.GL_DEPTH_TEST);
+		GL11.glDisable(GL11.GL_LIGHTING);                    
+		            
+		GL11.glClearDepth(1);                                       
+		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		GL11.glViewport(0,0,width,height);
+		GL11.glMatrixMode(GL11.GL_MODELVIEW);
+		
+		GL11.glMatrixMode(GL11.GL_PROJECTION);
+		GL11.glLoadIdentity();
+		GL11.glOrtho(0, width, height, 0, 1, -1);
+		GL11.glMatrixMode(GL11.GL_MODELVIEW);		
+		
+		if(isPlayButtonHovered){
+			texture2.bind();
+		}
+		else{
+			GL11.glColor3f(1, 1, 1);
+			texture1.bind();
+		}
+        GL11.glBegin(GL11.GL_QUADS);
+        
+        	GL11.glTexCoord2f(0, 0);
+        GL11.glVertex2i(x, y);
+        	GL11.glTexCoord2f(0, 1);
+        GL11.glVertex2i(x, y+size);
+        
+        	GL11.glTexCoord2f(1, 1);
+        GL11.glVertex2i(x+size, y+size);
+        	GL11.glTexCoord2f(1, 0);
+        GL11.glVertex2i(x+size, y);
+        
+        GL11.glEnd();
 	}
 	
 }

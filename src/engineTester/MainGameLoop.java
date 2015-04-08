@@ -8,12 +8,15 @@ import models.TexturedModel;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
+import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
 import renderEngine.DisplayManager;
+import renderEngine.GuiRenderer;
 import renderEngine.Loader;
 import renderEngine.MasterRenderer;
 import renderEngine.OBJLoader;
@@ -32,8 +35,11 @@ public class MainGameLoop {
 	private static boolean isGameOver = false;
 	private static boolean moveLeft = true;
 	private static final float initialBallSpeed = 4;
-	private static float ballSpeed = initialBallSpeed;
+	private static float ballSpeed = 0;
 	private static int initialNumWalls = 5;
+	
+	private static boolean isPlayButtonHovered = false;
+	private static boolean isPlayClicked = false;
 	
 	private static int WIDTH = 800;
 	private static int  HEIGHT = 600;
@@ -42,6 +48,7 @@ public class MainGameLoop {
 		DisplayManager.createDisplay(WIDTH,HEIGHT);
 		
 		Score score = new Score();
+		score.loadPlayImage("res/textures/play-button.png","res/textures/play-button-hover.png");
 		
 		Loader loader = new Loader();
 	
@@ -96,7 +103,7 @@ public class MainGameLoop {
 		delta = Maths.getDelta();
 		
 		while(!Display.isCloseRequested()){
-			if(!isGameOver)
+			if(!isGameOver && isPlayClicked)
 				ballSpeed += 0.01;
 			delta = Maths.getDelta();
 			camera.move();
@@ -106,13 +113,30 @@ public class MainGameLoop {
 			}
 			renderer.processEntities(floor);
 			renderer.processEntities(ball);
+			
 			renderer.render(light, camera);
 			if(ball.isFalling())
 				score.storeSessionScore();
 			if(isGameOver)
 				score.showScore();
 			
+			float mouseHoverX = Display.getWidth()/(float)Mouse.getX();
+			float mouseHoverY = Display.getHeight()/(float)Mouse.getY();
+			if(mouseHoverX >= 1.85 && mouseHoverX <= 2.3 && mouseHoverY >=2.7 && mouseHoverY <= 5.4){
+				isPlayButtonHovered = true;
+				if(Mouse.isButtonDown(0)){
+					isPlayClicked = true;
+					ballSpeed = initialBallSpeed;
+				}
+			}
+			else
+				isPlayButtonHovered = false;
+			
 			score.updateScore(ballSpeed,Display.getWidth(),Display.getHeight());
+			
+			if(!isPlayClicked)
+				score.renderPlayButton(isPlayButtonHovered);
+			
 			DisplayManager.updateDisplay();
 			
 			Vector4f bp = currentWall.isAbove(ball.getPosition()); // ballPosition wrt current wall
@@ -177,8 +201,14 @@ public class MainGameLoop {
 		    {
 		        if(Keyboard.getEventKey() == Keyboard.KEY_RETURN){
 		        	if(Keyboard.getEventKeyState() && !Keyboard.isRepeatEvent()){
-		        		resetGame(score,ball,camera,light,wallEntities,currentWall,texturedWall,floor);
-		        		currentWall = wallEntities.get(0);
+		        		if(isGameOver){
+			        		resetGame(score,ball,camera,light,wallEntities,currentWall,texturedWall,floor);
+			        		currentWall = wallEntities.get(0);
+		        		}
+		        		else{
+		        			isPlayClicked = true;
+		        			ballSpeed = initialBallSpeed;
+		        		}
 		        	}
 		        }
 		        else if(Keyboard.getEventKey() == Keyboard.KEY_LEFT){
@@ -188,6 +218,10 @@ public class MainGameLoop {
 		        else if(Keyboard.getEventKey() == Keyboard.KEY_RIGHT){
 		        	if(Keyboard.getEventKeyState() && !Keyboard.isRepeatEvent())
 		        		moveLeft = false;
+		        }
+		        else if(Keyboard.getEventKey() == Keyboard.KEY_1){
+		        	if(Keyboard.getEventKeyState() && !Keyboard.isRepeatEvent())
+		        		isPlayButtonHovered = isPlayButtonHovered?false:true;
 		        }
 		        else if(Keyboard.getEventKey() == Keyboard.KEY_F){
 		        	if(Keyboard.getEventKeyState() && !Keyboard.isRepeatEvent())	
@@ -223,7 +257,8 @@ public class MainGameLoop {
 		ball.setFalling(false);
 		ball.setVi(0);
 		moveLeft = true;
-		ballSpeed = initialBallSpeed;		
+		ballSpeed = 0;		
+		isPlayClicked = false;
 		light.setPosition(new Vector3f(0,6,0));
 		wallEntities.clear();
 		camera.reset();

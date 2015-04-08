@@ -27,8 +27,8 @@ public class MasterRenderer {
 	private StaticShader shader = new StaticShader();
 	private EntityRenderer renderer;
 	
-	private TerrainRenderer terrainRenderer;
-	private TerrainShader terrainShader = new TerrainShader();
+	//private TerrainRenderer terrainRenderer;
+	//private TerrainShader terrainShader = new TerrainShader();
 	
 	private Map<TexturedModel,List<Entity>> entities 
 		= new HashMap<TexturedModel,List<Entity>>();
@@ -39,7 +39,7 @@ public class MasterRenderer {
 		//GL11.glCullFace(GL11.GL_BACK);
 		createProjectionMatric();
 		renderer = new EntityRenderer(shader, projectionMatrix);
-		terrainRenderer = new TerrainRenderer(terrainShader, projectionMatrix);
+		//terrainRenderer = new TerrainRenderer(terrainShader, projectionMatrix);
 	}
 
 	public void render(Light sun, Camera camera){
@@ -49,10 +49,10 @@ public class MasterRenderer {
 		shader.loadViewMatrix(camera);
 		renderer.render(entities);
 		shader.stop();
-		terrainShader.start();
+		/*terrainShader.start();
 		terrainShader.loadLight(sun);
 		terrainRenderer.render(terrains);
-		terrainShader.stop();
+		terrainShader.stop();*/
 		terrains.clear();
 		entities.clear();
 	}
@@ -98,6 +98,6 @@ public class MasterRenderer {
 	
 	public void cleanUp(){
 		shader.cleanUp();
-		terrainShader.cleanUp();
+		//terrainShader.cleanUp();
 	}
 }
