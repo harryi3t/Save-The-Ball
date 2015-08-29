@@ -1,6 +1,5 @@
 package entities;
 
-import java.sql.Time;
 import java.util.List;
 import java.util.Random;
 

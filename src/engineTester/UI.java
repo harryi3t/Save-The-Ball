@@ -34,13 +34,13 @@ public class UI
      
     public UI() 
     {
-        JFrame mainFrame = new JFrame();
+        final JFrame mainFrame = new JFrame();
         mainFrame.setTitle("Save The Ball");
         ImageIcon icon = new ImageIcon("res/icon/ball.png");
         mainFrame.setIconImage(icon.getImage());
         
         // Create a new canvas and set its size.
-        Canvas canvas = new Canvas();
+        final Canvas canvas = new Canvas();
         // Must be 640*480 to match the size of an Env3D window
         canvas.setSize(800, 600);
         // This is the magic!  The setParent method attaches the 
@@ -65,7 +65,7 @@ public class UI
 					isCreditPageVisible = true;
 				else
 					return;
-				JFrame frame = new JFrame();
+				final JFrame frame = new JFrame();
 		        frame.setTitle("About");
 		        frame.setSize(500, 300);
 		        ImageIcon icon = new ImageIcon("res/icon/ball.png");

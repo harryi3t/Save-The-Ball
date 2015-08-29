@@ -2,14 +2,12 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/LWJGL2"/>
 	<classpathentry kind="lib" path="lib/jar/lwjgl_util.jar"/>
 	<classpathentry kind="lib" path="lib/jar/lwjgl.jar">
 		<attributes>
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="Save The Ball/lib/natives/windows"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/jar/slick-util.jar"/>
 	<classpathentry kind="lib" path="lib/jar/slick.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
