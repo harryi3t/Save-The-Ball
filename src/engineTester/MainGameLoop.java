@@ -77,9 +77,10 @@ public class MainGameLoop {
 		RawModel floorModel = loader.loadToVAO(floorPosition, floorTextureCoords, floorNormal, floorIndices);
 		RawModel ballModel = OBJLoader.loadObjModel("sphere", loader);
 		
+		ModelTexture floorTexture = new ModelTexture(loader.loadTexture("textures/grass"));
 		ModelTexture wallTexture = new ModelTexture(loader.loadTexture("textures/redWall"));
 		ModelTexture ballTexture = new ModelTexture(loader.loadTexture("textures/Football"));
-		ModelTexture floorTexture = new ModelTexture(loader.loadTexture("textures/grass"));
+		
 		
 		TexturedModel texturedWall = new TexturedModel(wallModel, wallTexture);
 		TexturedModel texturedBall = new TexturedModel(ballModel, ballTexture);

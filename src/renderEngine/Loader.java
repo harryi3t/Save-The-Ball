@@ -60,7 +60,7 @@ public class Loader {
 	}
 	
 	public int loadTexture(String fileName){
-		return loadTexture(fileName,"JPG");
+		return loadTexture(fileName,"jpg");
 	}
 	
 	
